@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard Galatama</title>
+    <style>
+        body { background-color: transparent; font-family: 'Segoe UI', Arial, sans-serif; color: #ffffff; margin: 0; padding: 10px; }
+        .container { width: 340px; background: rgba(15, 15, 25, 0.85); border: 2px solid #00ffcc; border-radius: 12px; padding: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); }
+        h2 { text-align: center; color: #00ffcc; margin: 0 0 10px 0; font-size: 18px; text-transform: uppercase; }
+        .scroll-area { max-height: 420px; overflow-y: auto; padding-right: 4px; }
+        ol { margin: 0; padding-left: 20px; }
+        li { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 5px; background: rgba(255, 255, 255, 0.08); border-radius: 6px; font-size: 14px; font-weight: bold; }
+        li:nth-child(1) { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; }
+        li:nth-child(2) { background: linear-gradient(135deg, #e0e0e0, #909090); color: #000; }
+        li:nth-child(3) { background: linear-gradient(135deg, #cd7f32, #8b4513); color: #fff; }
+        .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🏆 LEADERBOARD GALATAMA 🏆</h2>
+    <div class="scroll-area">
+        <ol id="leaderboard-list">
+            <li><span class="name">Menunggu data peserta...</span> <span>0 kg</span></li>
+        </ol>
+    </div>
+</div>
+<script>
+    async function updateLeaderboard() {
+        try {
+            const res = await fetch('/api/leaderboard');
+            const data = await res.json();
+            const listEl = document.getElementById('leaderboard-list');
+            listEl.innerHTML = '';
+            if (data.length === 0) {
+                listEl.innerHTML = '<li><span class="name">Belum ada peserta</span> <span>0 kg</span></li>';
+                return;
+            }
+            data.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="name">${index + 1}. ${item.nama}</span> <span>${item.poin.toFixed(1)} kg</span>`;
+                listEl.appendChild(li);
+            });
+        } catch (err) { console.error(err); }
+    }
+    setInterval(updateLeaderboard, 2000);
+    updateLeaderboard();
+</script>
+</body>
+</html>
